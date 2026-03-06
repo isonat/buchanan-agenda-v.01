@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Buchanan | Conversation Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark:#0f0f0f;--dark2:#1a1a1a;--dark3:#242424;
+  --gold:#C9A84C;--gold-light:#E8C97A;--gold-dim:rgba(201,168,76,0.12);
+  --cream:#F2EDE4;--muted:#777;--success:#2E7D52;--danger:#e05252;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--dark);color:var(--cream);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);border-bottom:1px solid #222;padding:12px 16px;display:flex;align-items:center;gap:12px;}
+.topbar-name{font-family:'Playfair Display',serif;font-size:15px;color:var(--gold);}
+.topbar-sub{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+.progress-wrap{flex:1;height:3px;background:#222;border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s ease;}
+.step-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;}
+.tabs{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--dark2);border-top:1px solid #222;display:flex;}
+.tab{flex:1;padding:10px 4px 14px;text-align:center;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;transition:color .2s;}
+.tab.active{color:var(--gold);}
+.tab-icon{display:block;font-size:16px;margin-bottom:3px;}
+.main{padding-top:68px;padding-bottom:78px;}
+.view{display:none;}
+.view.active{display:block;}
+.sh{padding:18px 16px 6px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.step-card{margin:0 16px 8px;background:var(--dark2);border:1px solid #222;border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .3s;}
+.step-card.active-step{border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,.08);}
+.step-card.done-step{opacity:.5;}
+.step-header{display:flex;align-items:center;gap:12px;padding:13px 14px;}
+.step-num{width:30px;height:30px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);flex-shrink:0;transition:background .3s,color .3s;}
+.step-card.active-step .step-num{background:var(--gold);color:var(--dark);}
+.step-card.done-step .step-num{background:var(--success);color:#fff;}
+.step-title-wrap{flex:1;}
+.step-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.step-card.active-step .step-label{color:var(--gold);}
+.step-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--cream);line-height:1.3;}
+.step-chev{font-size:14px;color:var(--muted);transition:transform .3s;}
+.step-card.open .step-chev{transform:rotate(90deg);}
+.step-body{display:none;padding:0 14px 14px 56px;border-top:1px solid #1e1e1e;}
+.step-card.open .step-body{display:block;}
+.step-body p{font-size:13px;color:#aaa;line-height:1.65;margin-top:10px;}
+.qblock{margin-top:10px;padding:11px 13px;background:var(--gold-dim);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;}
+.qblock-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+.qblock p{font-style:italic;color:var(--gold-light);font-size:13px;margin-top:0;line-height:1.6;}
+.step-actions{margin-top:12px;display:flex;gap:8px;}
+.btn{padding:8px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;border:none;cursor:pointer;transition:all .2s;}
+.btn-gold{background:var(--gold);color:var(--dark);}
+.btn-outline{background:transparent;color:var(--muted);border:1px solid #333;}
+.reset-btn{display:block;margin:16px auto;padding:9px 22px;background:transparent;border:1px solid #2a2a2a;border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;}
+.ncard{margin:0 16px 8px;background:var(--dark2);border:1px solid #222;border-radius:12px;padding:14px;}
+.ncard-title{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);margin-bottom:10px;}
+.nrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1e1e1e;}
+.nrow:last-child{border-bottom:none;}
+.nlabel{font-size:13px;color:var(--muted);}
+.nval{font-family:'DM Mono',monospace;font-size:13px;color:var(--cream);}
+.nval.gold{color:var(--gold);font-weight:600;}
+.nval.red{color:var(--danger);}
+.nval.green{color:#4CAF50;}
+.savings-banner{margin:0 16px 8px;background:var(--gold-dim);border:1px solid var(--gold);border-radius:12px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;}
+.savings-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);}
+.savings-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.savings-amt{font-family:'Playfair Display',serif;font-size:24px;color:var(--gold);}
+.roofopt{margin:0 16px 8px;background:var(--dark2);border:1px solid #222;border-radius:12px;padding:13px 14px;}
+.roofopt.rec{border-color:var(--gold);}
+.roofopt-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.roofname{font-family:'Playfair Display',serif;font-size:14px;color:var(--cream);}
+.badge{font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:20px;font-weight:600;}
+.badge-gold{background:var(--gold);color:var(--dark);}
+.badge-green{background:rgba(46,125,82,.2);color:#4CAF50;border:1px solid #2E7D52;}
+.badge-dim{background:#1e1e1e;color:var(--muted);}
+.roofprice{font-family:'DM Mono',monospace;font-size:16px;color:var(--gold);margin-bottom:5px;}
+.roofprice.dim{color:var(--muted);}
+.roofnotes{font-size:12px;color:var(--muted);line-height:1.5;}
+.roofpos{margin-top:8px;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:6px;font-size:12px;color:#888;font-style:italic;line-height:1.5;}
+.pcard{margin:0 16px 8px;background:var(--dark2);border:1px solid #222;border-radius:12px;overflow:hidden;}
+.ptag{padding:10px 14px 4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);}
+.ptext{margin:0 14px 14px;padding:10px 12px;font-style:italic;font-size:13px;color:var(--cream);line-height:1.7;background:var(--gold-dim);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;}
+.exit-card{margin:0 16px 10px;background:linear-gradient(135deg,#1a1500,#0f0f0f);border:1px solid var(--gold);border-radius:12px;padding:20px;text-align:center;}
+.exit-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.exit-quote{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);line-height:1.75;font-style:italic;}
+.exit-note{margin-top:12px;font-size:12px;color:var(--gold);}
+.acard{margin:0 16px 8px;background:var(--dark2);border:1px solid #222;border-radius:12px;padding:14px;}
+.acard-body{font-size:13px;color:#aaa;line-height:1.65;}
+.aitem{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #1e1e1e;}
+.aitem:last-child{border-bottom:none;padding-bottom:0;}
+.aicon{font-size:18px;flex-shrink:0;}
+.atitle{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:3px;}
+.abody{font-size:13px;color:var(--muted);line-height:1.55;}
+.ccard{margin:0 16px 8px;background:var(--dark2);border:1px solid #222;border-radius:12px;padding:13px 14px;}
+.ctitle{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.cbody{font-size:13px;color:#999;line-height:1.6;}
+.cbody strong{color:var(--cream);}
+/* FINANCING */
+.fin-toggle{display:flex;margin:0 16px 8px;background:var(--dark2);border:1px solid #222;border-radius:10px;overflow:hidden;}
+.fin-btn{flex:1;padding:9px 4px;text-align:center;font-size:11px;color:var(--muted);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;letter-spacing:.04em;transition:all .2s;}
+.fin-btn.active{background:var(--gold);color:var(--dark);font-weight:600;}
+.fin-section{display:none;}
+.fin-section.active{display:block;}
+.fin-highlight{margin:0 16px 8px;background:linear-gradient(135deg,#1a1500,#111);border:1px solid var(--gold);border-radius:12px;padding:16px;}
+.fin-highlight-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.fin-monthly{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);}
+.fin-monthly span{font-size:13px;color:var(--muted);font-family:'DM Sans',sans-serif;}
+.fin-note{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.divider{margin:0 16px 8px;height:1px;background:#1e1e1e;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-name">Nick Buchanan</div>
+    <div class="topbar-sub">557 King Drive · Full Exterior Package</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+  <div class="step-count" id="sCnt">0 / 7</div>
+</div>
+
+<div class="main">
+
+  <!-- FLOW -->
+  <div class="view active" id="view-flow">
+    <div class="step-card" id="card-1" onclick="toggle(1)">
+      <div class="step-header">
+        <div class="step-num" id="n1">1</div>
+        <div class="step-title-wrap">
+          <div class="step-label">Step 1 · Open</div>
+          <div class="step-title">Start on their vision, not yours</div>
+        </div>
+        <div class="step-chev">›</div>
+      </div>
+      <div class="step-body">
+        <p>They called about siding. Let them feel heard before going anywhere else. Two to three minutes. No more. This earns you the right to pivot.</p>
+        <div class="qblock"><div class="qblock-label">Say something like</div><p>"Everything we discussed about the board-and-batten direction still stands. I've been thinking about this home and I'm genuinely excited about what it's going to look like when it's done."</p></div>
+        <div class="step-actions">
+          <button class="btn btn-gold" onclick="done(1,event)">Done ✓</button>
+          <button class="btn btn-outline" onclick="undone(1,event)">Undo</button>
+        </div>
+      </div>
+    </div>
+    <div class="step-card" id="card-2" onclick="toggle(2)">
+      <div class="step-header">
+        <div class="step-num" id="n2">2</div>
+        <div class="step-title-wrap">
+          <div class="step-label">Step 2 · Pivot</div>
+          <div class="step-title">Introduce the inspection — transparently</div>
+        </div>
+        <div class="step-chev">›</div>
+      </div>
+      <div class="step-body">
+        <p>Don't sneak the roof in. Name it directly. Then slow down on the rear slope moss and chimney flashing photos. Let the images land before you editorialize.</p>
+        <div class="qblock"><div class="qblock-label">Say something like</div><p>"Before we get into the siding options, I want to walk you through what I documented. It shapes how we should sequence this and I'd rather be upfront about it now."</p></div>
+        <div class="step-actions">
+          <button class="btn btn-gold" onclick="done(2,event)">Done ✓</button>
+          <button class="btn btn-outline" onclick="undone(2,event)">Undo</button>
+        </div>
+      </div>
+    </div>
+    <div class="step-card" id="card-3" onclick="toggle(3)">
+      <div class="step-header">
+        <div class="step-num" id="n3">3</div>
+        <div class="step-title-wrap">
+          <div class="step-label">Step 3 · Sequence</div>
+          <div class="step-title">Make the roof-first case — honestly</div>
+        </div>
+        <div class="step-chev">›</div>
+      </div>
+      <div class="step-body">
+        <p>This is the truth, not a sales tactic, and they'll know the difference. New Hardie siding on a compromised roof puts a $40K investment at risk.</p>
+        <div class="qblock"><div class="qblock-label">Core argument</div><p>"The roof is the first line of defense on everything that comes after it. I can't in good conscience put new siding on a home with these indicators and not tell you what I'm seeing."</p></div>
+        <p>Also: the Ambassador discount only applies when roof + siding + gutters are done together. The math works in their favor as one project.</p>
+        <div class="step-actions">
+          <button class="btn btn-gold" onclick="done(3,event)">Done ✓</button>
+          <button class="btn btn-outline" onclick="undone(3,event)">Undo</button>
+        </div>
+      </div>
+    </div>
+    <div class="step-card" id="card-4" onclick="toggle(4)">
+      <div class="step-header">
+        <div class="step-num" id="n4">4</div>
+        <div class="step-title-wrap">
+          <div class="step-label">Step 4 · Roof Options</div>
+          <div class="step-title">Present Windsor first, always</div>
+        </div>
+        <div class="step-chev">›</div>
+      </div>
+      <div class="step-body">
+        <p>Walk Windsor fully as the orientation point. Then call Vista "what most long-term owners choose." Acknowledge Highlander as valid — just not right for this project.</p>
+        <div class="qblock"><div class="qblock-label">On the Highlander</div><p>"Solid shingle, right for other projects. Given the direction you're going with the exterior, this isn't the one I'd recommend here."</p></div>
+        <p>See the Numbers tab for all pricing and financing breakdowns.</p>
+        <div class="step-actions">
+          <button class="btn btn-gold" onclick="done(4,event)">Done ✓</button>
+          <button class="btn btn-outline" onclick="undone(4,event)">Undo</button>
+        </div>
+      </div>
+    </div>
+    <div class="step-card" id="card-5" onclick="toggle(5)">
+      <div class="step-header">
+        <div class="step-num" id="n5">5</div>
+        <div class="step-title-wrap">
+          <div class="step-label">Step 5 · Return</div>
+          <div class="step-title">Come back to siding as the reward</div>
+        </div>
+        <div class="step-chev">›</div>
+      </div>
+      <div class="step-body">
+        <p>This is where their emotional energy lives. Return to it fully. Board-and-batten, trim refinement, front door, gutters. The complete exterior transformation.</p>
+        <div class="qblock"><div class="qblock-label">Identity anchor</div><p>"What you're building is a home that looks like it was designed, not updated. Someone driving down King Drive is going to slow down. Everything we're discussing serves that result."</p></div>
+        <div class="step-actions">
+          <button class="btn btn-gold" onclick="done(5,event)">Done ✓</button>
+          <button class="btn btn-outline" onclick="undone(5,event)">Undo</button>
+        </div>
+      </div>
+    </div>
+    <div class="step-card" id="card-6" onclick="toggle(6)">
+      <div class="step-header">
+        <div class="step-num" id="n6">6</div>
+        <div class="step-title-wrap">
+          <div class="step-label">Step 6 · Ambassador</div>
+          <div class="step-title">Explain the program — after trust is built</div>
+        </div>
+        <div class="step-chev">›</div>
+      </div>
+      <div class="step-body">
+        <p>Don't lead with this. It lands harder after they already trust you. Frame it as an invitation, not a deal being offered.</p>
+        <div class="qblock"><div class="qblock-label">Opening frame</div><p>"Instead of spending our marketing budget on ads, we invest it in clients who share our vision. The Ambassador program is how we do that — and it's reserved for full exterior projects like this one."</p></div>
+        <p>See the Ambassador tab for the full breakdown of what's asked in return.</p>
+        <div class="step-actions">
+          <button class="btn btn-gold" onclick="done(6,event)">Done ✓</button>
+          <button class="btn btn-outline" onclick="undone(6,event)">Undo</button>
+        </div>
+      </div>
+    </div>
+    <div class="step-card" id="card-7" onclick="toggle(7)">
+      <div class="step-header">
+        <div class="step-num" id="n7">7</div>
+        <div class="step-title-wrap">
+          <div class="step-label">Step 7 · Exit</div>
+          <div class="step-title">Leave the room clean</div>
+        </div>
+        <div class="step-chev">›</div>
+      </div>
+      <div class="step-body">
+        <p>No pressure. No lingering. Give them space, anchor the timeline naturally, then go. Leave the estimates. Leave the inspection report.</p>
+        <div class="qblock"><div class="qblock-label">Exit line — say this exactly</div><p>"The number that matters most is the combined package after the Ambassador discount. Everything else is detail. Sleep on whether Windsor or Vista is the right roof — but I wouldn't sleep too long on whether the roof comes first. I think you already know the answer to that."</p></div>
+        <div class="step-actions">
+          <button class="btn btn-gold" onclick="done(7,event)">Done ✓</button>
+          <button class="btn btn-outline" onclick="undone(7,event)">Undo</button>
+        </div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="resetAll()">↺ Reset All Steps</button>
+  </div>
+
+  <!-- NUMBERS -->
+  <div class="view" id="view-numbers">
+    <div class="sh">Full Package — Ambassador Pricing</div>
+    <div class="savings-banner">
+      <div><div class="savings-label">Total Ambassador Savings</div><div class="savings-sub">Only applies when combined</div></div>
+      <div class="savings-amt">$6,536</div>
+    </div>
+    <div class="ncard">
+      <div class="ncard-title">Windsor Premium Roof</div>
+      <div class="nrow"><div class="nlabel">Standard</div><div class="nval">$37,182.63</div></div>
+      <div class="nrow"><div class="nlabel">Ambassador discount</div><div class="nval red">−$3,718.26</div></div>
+      <div class="nrow"><div class="nlabel">Their price</div><div class="nval gold">$33,464.37</div></div>
+    </div>
+    <div class="ncard">
+      <div class="ncard-title">James Hardie B+B Siding</div>
+      <div class="nrow"><div class="nlabel">Standard</div><div class="nval">$42,100.88</div></div>
+      <div class="nrow"><div class="nlabel">Ambassador discount</div><div class="nval red">−$2,105.04</div></div>
+      <div class="nrow"><div class="nlabel">Their price</div><div class="nval gold">$39,995.84</div></div>
+    </div>
+    <div class="ncard">
+      <div class="ncard-title">Gutters — 6" K-Style + Downspouts</div>
+      <div class="nrow"><div class="nlabel">Option 1 — Keep existing guards</div><div class="nval">$4,754.40</div></div>
+      <div class="nrow"><div class="nlabel">Ambassador discount</div><div class="nval red">−$713.16</div></div>
+      <div class="nrow"><div class="nlabel">Option 1 their price</div><div class="nval gold">$4,041.24</div></div>
+      <div class="nrow"><div class="nlabel">Option 2 — Upgrade to Gutter RX</div><div class="nval">$5,930.00</div></div>
+      <div class="nrow"><div class="nlabel">Upgrade difference</div><div class="nval" style="color:var(--muted)">+$1,175.60</div></div>
+    </div>
+    <div class="ncard">
+      <div class="ncard-title">Still to be Priced</div>
+      <div class="nrow"><div class="nlabel">Front door</div><div class="nval" style="color:var(--muted)">TBD</div></div>
+    </div>
+    <div class="ncard" style="border-color:var(--gold)">
+      <div class="ncard-title" style="color:var(--gold)">Combined Total (Roof + Siding + Gutters Opt 1)</div>
+      <div class="nrow"><div class="nlabel">Before Ambassador</div><div class="nval">$84,037.91</div></div>
+      <div class="nrow"><div class="nlabel">Total savings</div><div class="nval red">−$6,536.46</div></div>
+      <div class="nrow"><div class="nlabel">Their price</div><div class="nval gold">$77,501.45</div></div>
+    </div>
+
+    <div class="sh">Roofing Options</div>
+    <div class="roofopt rec">
+      <div class="roofopt-hdr"><div class="roofname">Windsor Premium</div><div class="badge badge-gold">Recommend</div></div>
+      <div class="roofprice">$33,464 <span style="font-size:11px;color:var(--muted);font-family:'DM Sans'">w/ disc.</span></div>
+      <div class="roofnotes">Class 4 · 350 lbs/sq · Lifetime algae · Scotchgard · 50yr non-prorated</div>
+      <div class="roofpos">Present first. Flagship. Matches the ambition of the siding investment. Right for someone staying long-term.</div>
+    </div>
+    <div class="roofopt">
+      <div class="roofopt-hdr"><div class="roofname">Vista AR</div><div class="badge badge-green">Class 4</div></div>
+      <div class="roofprice dim">$22,857 <span style="font-size:11px;font-family:'DM Sans'">no Amb. disc.</span></div>
+      <div class="roofnotes">Class 4 · 225 lbs/sq · 25yr algae · Flexor polymer</div>
+      <div class="roofpos">"What most long-term owners on a tighter budget choose." No Ambassador discount if separated from siding.</div>
+    </div>
+    <div class="roofopt">
+      <div class="roofopt-hdr"><div class="roofname">Highlander NEX AR</div><div class="badge badge-dim">Class 3</div></div>
+      <div class="roofprice dim">$21,901 <span style="font-size:11px;font-family:'DM Sans'">no Amb. disc.</span></div>
+      <div class="roofnotes">Class 3 · 210 lbs/sq · 15yr algae warranty</div>
+      <div class="roofpos">"Solid shingle, right for other projects. Given the direction you're going with the exterior, this isn't the one I'd recommend here."</div>
+    </div>
+
+    <div class="sh">Payment Options</div>
+    <div class="ncard">
+      <div class="ncard-title">Option 1 — 50 / 50</div>
+      <div class="nrow"><div class="nlabel">50% down to order + schedule</div><div class="nval gold">$38,750</div></div>
+      <div class="nrow"><div class="nlabel">50% upon completion</div><div class="nval gold">$38,750</div></div>
+    </div>
+    <div class="ncard">
+      <div class="ncard-title">Option 2 — 25 / 25 / 50</div>
+      <div class="nrow"><div class="nlabel">25% down to order product</div><div class="nval gold">$19,375</div></div>
+      <div class="nrow"><div class="nlabel">25% to schedule once product secured</div><div class="nval gold">$19,375</div></div>
+      <div class="nrow"><div class="nlabel">50% upon completion</div><div class="nval gold">$38,750</div></div>
+    </div>
+
+    <div class="sh">Financing — Medallion Bank</div>
+    <div class="ncard" style="margin-bottom:8px;">
+      <div class="ncard-title">Plan 101 · 9.99% · 180 Months (15 yrs)</div>
+      <div class="nrow"><div class="nlabel">Financier</div><div class="nval">Medallion Bank</div></div>
+      <div class="nrow"><div class="nlabel">Interest rate</div><div class="nval">9.99% APR</div></div>
+      <div class="nrow"><div class="nlabel">Term</div><div class="nval">180 months</div></div>
+      <div class="nrow"><div class="nlabel">Required</div><div class="nval" style="font-size:11px;color:var(--muted)">DL · DOB · SSN</div></div>
+      <div class="nrow"><div class="nlabel">Approval turnaround</div><div class="nval">Same day</div></div>
+    </div>
+
+    <div class="sh">Financing Scenarios</div>
+    <div class="fin-toggle">
+      <button class="fin-btn active" onclick="finTab('full')">Full Project</button>
+      <button class="fin-btn" onclick="finTab('roof')">Roof Only</button>
+      <button class="fin-btn" onclick="finTab('deposit')">Deposit Only</button>
+    </div>
+
+    <div class="fin-section active" id="fin-full">
+      <div class="fin-highlight">
+        <div class="fin-highlight-label">Full Package Financed — $77,501</div>
+        <div class="fin-monthly">~$833 <span>/ month</span></div>
+        <div class="fin-note">9.99% APR · 180 months · Approximate — Medallion calculates exact figure at approval</div>
+      </div>
+      <div class="ncard">
+        <div class="nrow"><div class="nlabel">50% deposit financed</div><div class="nval gold">~$416/mo</div></div>
+        <div class="nrow"><div class="nlabel">25% deposit financed</div><div class="nval gold">~$208/mo</div></div>
+        <div class="nrow"><div class="nlabel">Full project financed</div><div class="nval gold">~$833/mo</div></div>
+      </div>
+    </div>
+
+    <div class="fin-section" id="fin-roof">
+      <div class="fin-highlight">
+        <div class="fin-highlight-label">Windsor Roof Only — $33,464</div>
+        <div class="fin-monthly">~$359 <span>/ month</span></div>
+        <div class="fin-note">9.99% APR · 180 months · Approximate</div>
+      </div>
+      <div class="ncard">
+        <div class="nrow"><div class="nlabel">50% deposit financed</div><div class="nval gold">~$180/mo</div></div>
+        <div class="nrow"><div class="nlabel">25% deposit financed</div><div class="nval gold">~$90/mo</div></div>
+        <div class="nrow"><div class="nlabel">Full roof financed</div><div class="nval gold">~$359/mo</div></div>
+      </div>
+    </div>
+
+    <div class="fin-section" id="fin-deposit">
+      <div class="fin-highlight">
+        <div class="fin-highlight-label">Deposit Scenarios — Full Package</div>
+        <div class="fin-monthly">~$208 <span>/ month</span></div>
+        <div class="fin-note">25% deposit financed · 9.99% APR · 180 months</div>
+      </div>
+      <div class="ncard">
+        <div class="nrow"><div class="nlabel">Finance 25% deposit ($19,375)</div><div class="nval gold">~$208/mo</div></div>
+        <div class="nrow"><div class="nlabel">Finance 50% deposit ($38,750)</div><div class="nval gold">~$416/mo</div></div>
+        <div class="nrow"><div class="nlabel">Pay remainder at completion</div><div class="nval" style="color:var(--muted)">cash / check</div></div>
+      </div>
+      <div class="ncard">
+        <div class="acard-body" style="font-size:12px;">Can be used for initial deposit only, final balance only, or the entire project — client's choice. Coordinate in-person to collect DL, DOB, and SSN for Medallion submission.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PHRASES -->
+  <div class="view" id="view-phrases">
+    <div class="sh">When introducing the roof</div>
+    <div class="pcard"><div class="ptag">Sequencing logic</div><div class="ptext">"We don't put new siding on a house that could leak in two years. The roof is the first line of defense on everything that comes after it."</div></div>
+    <div class="sh">On the discount</div>
+    <div class="pcard"><div class="ptag">Ambassador integrity</div><div class="ptext">"The Ambassador discount comes out of our margin — not an inflated starting price. We wouldn't want that done to us, so we don't do it to our clients. If another contractor comes in lower, ask them where that difference is coming from."</div></div>
+    <div class="sh">On the full package</div>
+    <div class="pcard"><div class="ptag">Identity anchor</div><div class="ptext">"What you're building is a home that looks like it was designed, not updated. Someone driving down King Drive is going to slow down. Everything we're discussing is in service of that result."</div></div>
+    <div class="sh">On financing</div>
+    <div class="pcard"><div class="ptag">Making it accessible</div><div class="ptext">"We work with Medallion Bank so you can structure this however makes the most sense for you — whether that's financing just the deposit to get things moving, or the full project. Approval is usually same-day and we handle everything in person so your information stays protected."</div></div>
+    <div class="sh">If they ask for time</div>
+    <div class="pcard"><div class="ptag">Give it genuinely</div><div class="ptext">"Absolutely. Take the week. The one thing I'd encourage you to think about is the sequencing — that determines the timeline. If you want a finished exterior by summer, the decision window is now. But that's your call."</div></div>
+    <div class="sh">Exit line</div>
+    <div class="exit-card">
+      <div class="exit-label">Say this. Then leave.</div>
+      <div class="exit-quote">"The number that matters most is the combined package after the Ambassador discount. Everything else is detail. Sleep on whether Windsor or Vista is the right roof — but I wouldn't sleep too long on whether the roof comes first. I think you already know the answer to that."</div>
+      <div class="exit-note">Leave the estimates. Leave the inspection report.</div>
+    </div>
+  </div>
+
+  <!-- AMBASSADOR -->
+  <div class="view" id="view-ambassador">
+    <div class="sh">Why it exists</div>
+    <div class="acard"><div class="acard-body">Instead of spending our marketing budget on ads or TV spots, we invest it directly in clients who share our vision. You become part of how we represent ourselves. Reserved for full exterior projects where we can document the transformation properly — not every project qualifies.</div></div>
+    <div class="sh">What we ask in return</div>
+    <div class="acard">
+      <div class="aitem"><div class="aicon">📸</div><div><div class="atitle">Photography</div><div class="abody">Cameron documents the finished exterior — full luxury shots and drone coverage. Your home becomes part of how we present ourselves to future clients.</div></div></div>
+      <div class="aitem"><div class="aicon">⭐</div><div><div class="atitle">Honest Google Review</div><div class="abody">We don't write it. We don't tell you what to say. "If we do our job right, you'll want to write it. If we don't, we'd rather know that."</div></div></div>
+      <div class="aitem"><div class="aicon">🤝</div><div><div class="atitle">Three Referrals</div><div class="abody">People in your circle who care about their homes the way you do. We reach out respectfully — no pressure, ever.</div></div></div>
+    </div>
+    <div class="sh">On price integrity</div>
+    <div class="acard"><div class="acard-body">This is real — it cuts into our margin. We don't inflate a price and then offer a "discount." We wouldn't want that done to us.<br><br><span style="color:var(--cream);font-style:italic;">If any contractor claims they can do this job cheaper, they are cutting corners somewhere.</span></div></div>
+    <div class="sh">Inspection — Key Callouts</div>
+    <div class="ccard"><div class="ctitle">🌿 Rear Slope</div><div class="cbody">Substantial <strong>moss growth</strong> — prolonged moisture exposure. <strong>Visible oxidation</strong> consistent with aging. Roof is in the back half of its service life.</div></div>
+    <div class="ccard"><div class="ctitle">🏚 Chimney Flashing</div><div class="cbody">Previously redone due to <strong>improper installation and leakage</strong>. History reinforces the need for a full review before investing in siding.</div></div>
+    <div class="ccard"><div class="ctitle">🪟 Windows — Left Elevation</div><div class="cbody">Both second-story windows have <strong>failed seals</strong>. Double-pane, colonial grids. Flag for evaluation — IGU replacement or full unit.</div></div>
+    <div class="ccard"><div class="ctitle">💨 Ventilation</div><div class="cbody">Gable vents both sides. <strong>Configuration may reduce airflow efficiency.</strong> Shingle longevity tied directly to attic ventilation — worth a dedicated inspection.</div></div>
+    <div class="sh">Medallion Bank — Quick Reference</div>
+    <div class="acard">
+      <div class="aitem"><div class="aicon">📋</div><div><div class="atitle">What they need</div><div class="abody">Driver's License · Date of Birth · SSN — collected in person only to protect client information.</div></div></div>
+      <div class="aitem"><div class="aicon">⚡</div><div><div class="atitle">Turnaround</div><div class="abody">Approval is typically same day. Client can finance the deposit, the full project, or anything in between.</div></div></div>
+      <div class="aitem"><div class="aicon">📞</div><div><div class="atitle">Customer Service</div><div class="abody">(855) 653-9231 · Mon–Fri 8am–11pm MT · Sat 9am–1pm MT</div></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" id="tab-flow" onclick="switchTab('flow')"><span class="tab-icon">▶</span>Flow</button>
+  <button class="tab" id="tab-numbers" onclick="switchTab('numbers')"><span class="tab-icon">$</span>Numbers</button>
+  <button class="tab" id="tab-phrases" onclick="switchTab('phrases')"><span class="tab-icon">"</span>Phrases</button>
+  <button class="tab" id="tab-ambassador" onclick="switchTab('ambassador')"><span class="tab-icon">★</span>Amb.</button>
+</div>
+
+<script>
+var completed=new Set();var openCard=null;
+function switchTab(tab){['flow','numbers','phrases','ambassador'].forEach(function(t){document.getElementById('view-'+t).classList.remove('active');document.getElementById('tab-'+t).classList.remove('active');});document.getElementById('view-'+tab).classList.add('active');document.getElementById('tab-'+tab).classList.add('active');}
+function toggle(n){var card=document.getElementById('card-'+n);var isOpen=card.classList.contains('open');if(openCard!==null&&openCard!==n){document.getElementById('card-'+openCard).classList.remove('open');}if(isOpen){card.classList.remove('open');openCard=null;}else{card.classList.add('open');card.classList.add('active-step');openCard=n;setTimeout(function(){card.scrollIntoView({behavior:'smooth',block:'nearest'});},50);}}
+function done(n,e){e.stopPropagation();completed.add(n);var card=document.getElementById('card-'+n);card.classList.remove('open','active-step');card.classList.add('done-step');document.getElementById('n'+n).textContent='✓';openCard=null;updateProgress();if(n+1<=7){setTimeout(function(){toggle(n+1);},300);}}
+function undone(n,e){e.stopPropagation();completed.delete(n);var card=document.getElementById('card-'+n);card.classList.remove('done-step');document.getElementById('n'+n).textContent=n;updateProgress();}
+function updateProgress(){var pct=(completed.size/7)*100;document.getElementById('pFill').style.width=pct+'%';document.getElementById('sCnt').textContent=completed.size+' / 7';}
+function resetAll(){completed.clear();for(var i=1;i<=7;i++){var card=document.getElementById('card-'+i);card.classList.remove('open','active-step','done-step');document.getElementById('n'+i).textContent=i;}openCard=null;updateProgress();}
+function finTab(t){document.querySelectorAll('.fin-btn').forEach(function(b){b.classList.remove('active');});document.querySelectorAll('.fin-section').forEach(function(s){s.classList.remove('active');});event.target.classList.add('active');document.getElementById('fin-'+t).classList.add('active');}
+setTimeout(function(){toggle(1);},400);
+</script>
+</body>
+</html>
